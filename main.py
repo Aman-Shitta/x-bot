@@ -24,7 +24,7 @@ from config import (
     AIConfig
 )
 from helper import validate_env_vars
-
+from tweet_generator import TweetGenerator
 
 # Initialize logging first
 setup_logging()
@@ -66,6 +66,14 @@ if __name__ == "__main__":
 
         # set log level as per config
         logger.setLevel(config.log_level)
+
+        tweety = TweetGenerator(config=config.ai_config, llm='groq')
+        tweet = tweety.generate_tweet(topic="QOTD i.e Quote of the day")
+        
+        # for future scope the tweets will be picked from a queue service (redis or rabbitmq)
+        config.tweet_text = tweet
+
+        logger.info("Tweeting this [+] ", tweet, " [+]")
 
         # If twiiter let's, we'll have valid tweet data to process
         # in future pipelines.. (aggregation or just checks)
