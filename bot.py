@@ -3,13 +3,14 @@ import logging
 from typing import Optional
 from tweepy import Response
 
+from helper import REQUIRED_VARS
+
 logger = logging.getLogger(__name__)  
 
 class TwitterBot:
 
     def __init__(self, *args, **kwargs):
-        required_keys = ['API_KEY', 'API_SECRET', 'ACCESS_TOKEN', 'ACCESS_SECRET', 'BEARER_TOKEN']
-        missing_keys = [key for key in required_keys if not kwargs.get(key)]
+        missing_keys = [key for key in REQUIRED_VARS if not kwargs.get(key)]
         if missing_keys:
             raise ValueError(f"Missing required credentials: {', '.join(missing_keys)}")
             

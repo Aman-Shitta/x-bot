@@ -24,7 +24,7 @@ from config import (
     AIConfig
 )
 from helper import validate_env_vars
-from tweet_generator import TweetGenerator
+from tweet_generator import AITweetGenerator
 
 # Initialize logging first
 setup_logging()
@@ -61,15 +61,36 @@ if __name__ == "__main__":
         
         # Initialize configuration
         config = Config(
-            ai_config=AIConfig()
+            ai_config=AIConfig(
+                tones=["humourous"],
+                topics=["QOTD i.e Quote of the day", "Indian demographics"]
+            )
         )
 
         # set log level as per config
         logger.setLevel(config.log_level)
 
-        tweety = TweetGenerator(config=config.ai_config, llm='groq')
-        tweet = tweety.generate_tweet(topic="QOTD i.e Quote of the day")
-        
+
+        # # Try to read from from tweets.txt first
+        # tweet_file_path = Path(__file__).parent / 'tweets.txt'
+
+        # if tweet_file_path.exists():
+        #     with open(tweet_file_path, 'r') as f:
+        #         lines = f.readlines()
+        #         if lines:
+        #             tweet = lines[0].strip()
+        #             # Remove the used tweet from file
+        #             with open(tweet_file_path, 'w') as f:
+        #                 f.writelines(lines[1:])
+        # else:
+        #     logger.warning("please check the source file.")
+
+
+        # Use AI to generate tweet
+        tweety = AITweetGenerator(config=config.ai_config, llm='gpt')
+        tweet = tweety.generate_tweet()
+
+
         # for future scope the tweets will be picked from a queue service (redis or rabbitmq)
         config.tweet_text = tweet
 

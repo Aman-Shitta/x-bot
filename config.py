@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Optional, List
 
 @dataclass
@@ -6,8 +6,8 @@ class AIConfig:
     prompt_template: str = "Generate a tweet about {topic} in a {tone} tone"
     temperature: float = 0.7
     max_tokens: int = 255
-    topics: List[str] = None
-    tone: str = "professional but catchy"
+    topics: List[str] = field(default_factory=lambda: ["technology"])
+    tones: List[str] = field(default_factory=lambda: ["professional", "catchy"])
 
 @dataclass
 class Config:

@@ -7,27 +7,26 @@ from abc import ABC, abstractmethod
 
 logger = logging.getLogger(__name__)
 
-class LLMHelper:
+class LLMTweetHelper:
 
     @abstractmethod
-    def generate_content(self, topic: str) -> str:
+    def generate_content(self, msg: str) -> str:
         pass
 
-
-class GroqHelper(LLMHelper):
+class GroqTweetHelper(LLMTweetHelper):
 
     def __init__(self, model="llama-3.3-70b-versatile", api_key=None):
         self.model = model
         self.client = Groq(api_key=api_key)
         pass
 
-    def generate_content(self, topic: str) -> str:
+    def generate_content(self, msg: str) -> str:
         try:
             completion = self.client.chat.completions.create(
                 model=self.model,
                 messages=[{
                     "role": "user",
-                    "content": topic
+                    "content": msg
                 }],
                 temperature=1,
                 max_completion_tokens=1024,
@@ -43,16 +42,16 @@ class GroqHelper(LLMHelper):
             logger.error("Failed to generate content: %s", str(e))
             raise
 
-class GptHelper(LLMHelper):
+class GptTweetHelper(LLMTweetHelper):
 
     def __init__(self):
         self.model = None
         self.client = None
 
-    def generate_content(self, topic: str) -> str:
+    def generate_content(self, msg: str) -> str:
         raise NotImplementedError("Not implemented yet.")
 
-class TweetGenerator:
+class AITweetGenerator:
     """
     Generates tweets using various LLM providers.
     
@@ -65,10 +64,12 @@ class TweetGenerator:
     """
     def __init__(self, config: AIConfig, llm: str = 'groq') -> None:
 
-        self.config: AIConfig = config
+        self.config: AIConfig
+        self.llm_instance: LLMTweetHelper
 
-        self.llm_instance: LLMHelper
-        llm_class_name = llm.capitalize() + "Helper"
+        self.config = config
+
+        llm_class_name = llm.capitalize() + "TweetHelper"
         llm_class = globals().get(llm_class_name)
         
         if llm_class is None:
@@ -76,13 +77,13 @@ class TweetGenerator:
         
         self.llm_instance = llm_class()
         
-    def generate_tweet(self, topic: str = "technology") -> str:
+    def generate_tweet(self) -> str:
         prompt = self.config.prompt_template.format(
-            topic=topic,
-            tone=self.config.tone
+            topic=", ". join(self.config.topics),
+            tone=", ".join(self.config.tones)
         )
         
-        tweet = self.llm_instance.generate_content(topic=prompt)
+        tweet = self.llm_instance.generate_content(msg=prompt)
         
         if len(tweet) > self.config.max_tokens:
             tweet = tweet[:self.config.max_tokens]
