@@ -1,0 +1,12 @@
+[Unit]
+Description=Run Twitter Bot every 30 minutes
+Requires=bot.service
+
+[Timer]
+Unit=bot.service
+OnBootSec=1min
+OnUnitActiveSec=30min
+AccuracySec=1s
+
+[Install]
+WantedBy=timers.target

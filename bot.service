@@ -1,0 +1,14 @@
+[Unit]
+Description=Twitter Bot Service
+After=network.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/home/aman/Projects/x-bot/src/.env
+ExecStart=/home/aman/Projects/x-bot/env/bin/python3 /home/aman/Projects/x-bot/src/main.py
+WorkingDirectory=/home/aman/Projects/x-bot/src
+StandardOutput=append:/home/aman/Projects/x-bot/twitterbot.log
+StandardError=append:/home/aman/Projects/x-bot/twitterbot.log
+
+[Install]
+WantedBy=multi-user.target
