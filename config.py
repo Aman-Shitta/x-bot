@@ -7,7 +7,7 @@ class AIConfig:
     temperature: float = 0.7
     max_tokens: int = 255
     topics: List[str] = None
-    tone: str = "professional,catchy"
+    tone: str = "professional but catchy"
 
 @dataclass
 class Config:
