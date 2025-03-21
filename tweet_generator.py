@@ -34,8 +34,10 @@ class GroqHelper(LLMHelper):
                 top_p=1,
             )
             resp = ""
-            for chunk in completion:
-                resp += chunk.choices[0].delta.content or ""
+ 
+            for choice in completion.choices:
+                msg = choice.message.content
+                resp += msg if msg else ""
             return resp
         except Exception as e:
             logger.error("Failed to generate content: %s", str(e))
